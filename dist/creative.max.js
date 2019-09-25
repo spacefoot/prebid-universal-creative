@@ -241,10 +241,11 @@ function newRenderingManager(win, environment) {
     var pubAdServerDomain = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
     var pubUrl = arguments[2];
 
+    var windowLocation = window.location;
     var parsedUrl = utils.parseUrl(pubUrl);
     var publisherDomain = parsedUrl.protocol + '://' + parsedUrl.host;
-    var adServerDomain = pubAdServerDomain !== '' ? pubAdServerDomain : GOOGLE_IFRAME_HOSTNAME;
-    var fullAdServerDomain = parsedUrl.protocol + '://' + adServerDomain;
+    var adServerDomain = pubAdServerDomain || GOOGLE_IFRAME_HOSTNAME;
+    var fullAdServerDomain = windowLocation.protocol + '//' + adServerDomain;
 
     function renderAd(ev) {
       var key = ev.message ? 'message' : 'data';

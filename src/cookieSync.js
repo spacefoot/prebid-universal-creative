@@ -12,10 +12,12 @@ import * as domHelper from './domHelper';
 
 const VALID_ENDPOINTS = {
   rubicon: 'https://prebid-server.rubiconproject.com/cookie_sync',
-  appnexus: 'https://prebid.adnxs.com/pbs/v1/cookie_sync'
+  appnexus: 'https://prebid.adnxs.com/pbs/v1/cookie_sync',
+  slmads: 'https://prebid-server.sportslocalmedia.com/cookie_sync'
 };
 const ENDPOINT = sanitizeEndpoint(parseQueryParam('endpoint', window.location.search));
 const ENDPOINT_ARGS = sanitizeEndpointArgs(parseQueryParam('args', window.location.search));
+const BIDDERS_ARGS = parseQueryParam('bidders', window.location.search);
 const maxSyncCountParam = parseQueryParam('max_sync_count', window.location.search);
 const MAX_SYNC_COUNT = sanitizeSyncCount(parseInt((maxSyncCountParam) ? maxSyncCountParam : 10, 10));
 const GDPR = sanitizeGdpr(parseInt(parseQueryParam('gdpr', window.location.search), 10));
@@ -177,7 +179,7 @@ function sanitizeEndpointArgs(value) {
       return keyValues;
     }, {});
     return (argProperties && Object.keys(argProperties).length) ? argProperties : undefined;
-  } 
+  }
 }
 
 /**
@@ -219,6 +221,10 @@ function sanitizeGdprConsent(value) {
 function getStringifiedData(endPointArgs) {
   var data = (endPointArgs && typeof endPointArgs === 'object') ? endPointArgs : {}
   data['limit'] = MAX_SYNC_COUNT;
+  data.bidders = ['appnexus', 'rubicon'];
+  if (BIDDERS_ARGS) {
+    data.bidders = BIDDERS_ARGS.split(',');
+  }
 
   if(GDPR) data.gdpr = GDPR;
   if(GDPR_CONSENT) data.gdpr_consent = GDPR_CONSENT;
